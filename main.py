@@ -1,45 +1,60 @@
-print('''
-*******************************************************************************
-          |                   |                  |                     |
- _________|________________.=""_;=.______________|_____________________|_______
-|                   |  ,-"_,=""     `"=.|                  |
-|___________________|__"=._o`"-._        `"=.______________|___________________
-          |                `"=._o`"=._      _`"=._                     |
- _________|_____________________:=._o "=._."_.-="'"=.__________________|_______
-|                   |    __.--" , ; `"=._o." ,-"""-._ ".   |
-|___________________|_._"  ,. .` ` `` ,  `"-._"-._   ". '__|___________________
-          |           |o`"=._` , "` `; .". ,  "-._"-._; ;              |
- _________|___________| ;`-.o`"=._; ." ` '`."\` . "-._ /_______________|_______
-|                   | |o;    `"-.o`"=._``  '` " ,__.--o;   |
-|___________________|_| ;     (#) `-.o `"=.`_.--"_o.-; ;___|___________________
-____/______/______/___|o;._    "      `".o|o_.--"    ;o;____/______/______/____
-/______/______/______/_"=._o--._        ; | ;        ; ;/______/______/______/_
-____/______/______/______/__"=._o--._   ;o|o;     _._;o;____/______/______/____
-/______/______/______/______/____"=._o._; | ;_.--"o.--"_/______/______/______/_
-____/______/______/______/______/_____"=.o|o_.--""___/______/______/______/____
-/______/______/______/______/______/______/______/______/______/______/_____ /
-*******************************************************************************
-''')
-print("Welcome to Treasure Island.")
-print("Your mission is to find the treasure.")
+import random
 
+# TODO-1: - Update the word list to use the 'word_list' from hangman_words.py
 
-level1 = input('Please choose left or right.Type "left" or "right" \n').lower()
-if level1 == "left":
-    level2 = input('Do you want to wait for a boat or swim to the island? Type "wait" for boat or "swim" to swim '
-                   'across. \n').lower()
-    if level2 == "wait":
-        level3 = input("You arrive at the island unharmed. There is a house. With 3 doors. One red, one yellow and "
-                       "one blue. Which colour do you choose? \n").lower()
-        if level3 == "red":
-            print("Burned by fire. Game Over.")
-        elif level3 == "blue":
-            print("Eaten by beast. Game Over.")
-        elif level3 == "yellow":
-            print("You Win!")
-        else:
-            print("Game Over.")
-    else:
-        print("Attacked by trout. Game Over.")
-else:
-    print("Fall into a hole. Game Over")
+from hangman_words import word_list
+from hangman_art import logo
+
+chosen_word = random.choice(word_list)
+word_length = len(chosen_word)
+
+end_of_game = False
+lives = 6
+
+# TODO-3: - Import the logo from hangman_art.py and print it at the start of the game.
+print(logo)
+
+# Testing code
+# print(f'Pssst, the solution is {chosen_word}.')
+
+# Create blanks
+display = []
+for _ in range(word_length):
+    display += "_"
+
+while not end_of_game:
+    guess = input("Guess a letter: ").lower()
+
+    # TODO-4: - If the user has entered a letter they've already guessed, print the letter and let them know.
+    if guess in display:
+        print(f"You've already guessed {guess}")
+
+    # Check guessed letter
+    for position in range(word_length):
+        letter = chosen_word[position]
+        # print(f"Current position: {position}\n Current letter: {letter}\n Guessed letter: {guess}")
+        if letter == guess:
+            display[position] = letter
+
+    # Check if user is wrong.
+    if guess not in chosen_word:
+        # TODO-5: - If the letter is not in the chosen_word, print out the letter and let them know it's not in the word.
+        print(f"You guessed {guess}, that's not in the word. You lose a life.")
+
+        lives -= 1
+        if lives == 0:
+            end_of_game = True
+            print("You lose.")
+
+    # Join all the elements in the list and turn it into a String.
+    print(f"{' '.join(display)}")
+
+    # Check if user has got all letters.
+    if "_" not in display:
+        end_of_game = True
+        print("You win.")
+
+    # TODO-2: - Import the stages from hangman_art.py and make this error go away.
+    from hangman_art import stages
+
+    print(stages[lives])
